@@ -1,0 +1,121 @@
+{
+    "id": 123290,
+    "number": 70065,
+    "parent": 1234,
+    "event": "push",
+    "status": "running",
+    "error": "",
+    "enqueued_at": 1568413172,
+    "created_at": 1568413172,
+    "started_at": 1568413173,
+    "finished_at": 0,
+    "deploy_to": "",
+    "commit": "0123456789fffffeeeeeabcdef012344567",
+    "branch": "feature-foobar",
+    "ref": "refs/heads/feature-foobar",
+    "refspec": "",
+    "remote": "https://github.com/acmeCo/coolApp.git",
+    "title": "",
+    "message": "live build, updated to latest version of node",
+    "timestamp": 0,
+    "sender": "jsmith",
+    "author": "jsmith",
+    "author_avatar": "https://avatars1.githubusercontent.com/u/xxx1234",
+    "author_email": "foo@bar.com",
+    "link_url": "https://github.com/acmeCo/coolApp/commit/0123456789fffffeeeeeabcdef012344567",
+    "signed": false,
+    "verified": true,
+    "reviewed_by": "",
+    "reviewed_at": 0,
+    "procs": [
+        {
+            "id": 12341234,
+            "build_id": 70065,
+            "pid": 1,
+            "ppid": 0,
+            "pgid": 1,
+            "name": "",
+            "state": "running",
+            "exit_code": 0,
+            "start_time": 1569166784,
+            "machine": "192.168.0.1",
+            "children": [
+                {
+                    "id": 2838814,
+                    "build_id": 70065,
+                    "pid": 2,
+                    "ppid": 1,
+                    "pgid": 2,
+                    "name": "clone",
+                    "state": "success",
+                    "exit_code": 0,
+                    "start_time": 1569166784,
+                    "end_time": 1569166785,
+                    "machine": "192.168.0.1"
+                },
+                {
+                    "id": 2838815,
+                    "build_id": 70065,
+                    "pid": 3,
+                    "ppid": 1,
+                    "pgid": 3,
+                    "name": "fetch_deps",
+                    "state": "running",
+                    "exit_code": 0,
+                    "start_time": 1569166785,
+                    "machine": "192.168.0.1"
+                },
+                {
+                    "id": 2838816,
+                    "build_id": 70065,
+                    "pid": 4,
+                    "ppid": 1,
+                    "pgid": 4,
+                    "name": "install",
+                    "state": "pending",
+                    "exit_code": 0
+                },
+                {
+                    "id": 2838817,
+                    "build_id": 70065,
+                    "pid": 5,
+                    "ppid": 1,
+                    "pgid": 5,
+                    "name": "lint",
+                    "state": "pending",
+                    "exit_code": 0
+                },
+                {
+                    "id": 2838818,
+                    "build_id": 70065,
+                    "pid": 6,
+                    "ppid": 1,
+                    "pgid": 5,
+                    "name": "test",
+                    "state": "pending",
+                    "exit_code": 0
+                },
+                {
+                    "id": 2838819,
+                    "build_id": 70065,
+                    "pid": 7,
+                    "ppid": 1,
+                    "pgid": 7,
+                    "name": "build",
+                    "state": "pending",
+                    "exit_code": 0
+                },
+                {
+                    "id": 2838820,
+                    "build_id": 70065,
+                    "pid": 8,
+                    "ppid": 1,
+                    "pgid": 8,
+                    "name": "deploy",
+                    "state": "pending",
+                    "exit_code": 0
+                }
+            ]
+        }
+    ]
+}
