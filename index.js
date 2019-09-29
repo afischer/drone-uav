@@ -8,12 +8,10 @@ const { Form, AutoComplete } = require('enquirer');
 
 const parseArgs = require('./src/cli');
 const { getRepos, getBuilds, getBuild } = require('./src/api');
-const { grayText, getIcon } = require('./src/constants');
+const { grayText, getIcon, DEFAULT_POLL_DELAY } = require('./src/constants');
 const { parseProc } = require('./src/parsers');
 
-const DEFAULT_POLL_DELAY = 4000;
-
-let BASE_CONFIG = { POLL_DELAY_MS: DEFAULT_POLL_DELAY };
+let CONFIG = { POLL_DELAY_MS: DEFAULT_POLL_DELAY };
 let currentRepo;
 let lastBuild;
 
@@ -23,83 +21,82 @@ async function setup() {
     const configJsonPath = path.join(os.homedir(), '.drone_uav.json');
     if (fs.existsSync(configJsonPath)) { // file exists, read config
       // eslint-disable-next-line global-require
-      BASE_CONFIG = { ...BASE_CONFIG, ...require(configJsonPath) };
+      CONFIG = { ...CONFIG, ...require(configJsonPath) };
     } else { // no config file, attempt to create
       const form = new Form({
         name: 'drone_uav',
         message: 'Welcome to uav! Enter the following info to create a ~/.drone_uav.json config file.',
-        choices: [
-          { name: 'DRONE_URL', message: 'Drone Instane URL', initial: 'https://drone.yourco.com' },
-          { name: 'DRONE_TOKEN', message: 'Personal Drone Token', initial: '' },
-        ],
+        choices: [{
+          name: 'DRONE_URL',
+          message: 'Drone Instane URL',
+          initial: 'https://drone.yourco.com',
+        }, {
+          name: 'DRONE_TOKEN',
+          message: 'Personal Drone Token',
+          initial: '',
+        }],
       });
 
       // get answers to form,
       const answers = await form.run();
-      BASE_CONFIG = { ...BASE_CONFIG, ...answers };
+      CONFIG = { ...CONFIG, ...answers };
 
       // write config to file
       fs.writeFile(
         configJsonPath,
-        JSON.stringify(BASE_CONFIG, null, 2),
+        JSON.stringify(CONFIG, null, 2),
         (err) => { throw new Error(err); },
       );
     }
 
-    if (!BASE_CONFIG.DRONE_TOKEN) throw new Error('No drone token provided. Check ~/.drone_uav.json');
-    if (!BASE_CONFIG.DRONE_URL) throw new Error('No drone URL provided. Check ~/.drone_uav.json');
+    if (!CONFIG.DRONE_TOKEN) throw new Error('No drone token provided. Check ~/.drone_uav.json');
+    if (!CONFIG.DRONE_URL) throw new Error('No drone URL provided. Check ~/.drone_uav.json');
   } catch (e) {
     console.warn('Error setting up uav:');
     if (e) console.warn(e);
     process.exit(1);
   }
 
-  const { DRONE_URL, DRONE_TOKEN } = BASE_CONFIG;
+  const { DRONE_URL, DRONE_TOKEN } = CONFIG;
 
   axios.defaults.baseURL = `${DRONE_URL}/api`;
   axios.defaults.headers.common = { Authorization: `Bearer ${DRONE_TOKEN}` };
 }
 
-const getRepoNames = async (org) => getRepos().then(
-  async (res) => {
-    const repos = res.data;
-    const repoNames = repos.map(({ full_name: fName }) => fName);
-    if (org) { // if org provided, only return those
-      const orgRepos = repoNames.filter((name) => name.startsWith(org));
-      if (!orgRepos.length) { // none found
-        console.warn(`No repos found for ${org}.`);
-        process.exit(1);
-      }
-      return orgRepos;
+const getRepoNames = async (org) => getRepos().then((res) => {
+  const repos = res.data;
+  const repoNames = repos.map(({ full_name: fName }) => fName);
+  if (org) { // if org provided, only return those
+    const orgRepos = repoNames.filter((name) => name.startsWith(org));
+    if (!orgRepos.length) { // none found
+      console.warn(`No repos found for ${org}.`);
+      process.exit(1);
     }
-    return repoNames;
-  },
-).catch((e) => { throw new Error(e); });
+    return orgRepos;
+  }
+  return repoNames;
+}).catch((e) => { throw new Error(e); });
 
-const getBuildNames = async (repo) => getBuilds(repo).then(
-  async (res) => {
-    const builds = res.data;
+const getBuildNames = async (repo) => getBuilds(repo).then((res) => {
+  const builds = res.data;
 
-    return builds.map((build) => {
-      const {
-        number, status, author, message,
-      } = build;
-      // sometimes messages can have newlines, be really long, so truncate
-      // for the list, add ellipses if shortened
-      let truncatedMsg = message.replace(/\n/g, ' ').substring(0, 70);
-      if (truncatedMsg !== message) truncatedMsg += '…';
-      const icon = getIcon(status);
-      const authorText = grayText(`by ${author}`);
-      return `${icon} [${number}] ${truncatedMsg} ${authorText}`;
-    });
-  },
-).catch((e) => { throw new Error(e); });
+  return builds.map((build) => {
+    const { number, status, author, message } = build;
+    // sometimes messages can have newlines, be really long, so truncate
+    // for the list, add ellipses if shortened
+    let truncatedMsg = message.replace(/\n/g, ' ').substring(0, 70);
+    if (truncatedMsg !== message) truncatedMsg += '…';
+    const icon = getIcon(status);
+    const authorText = grayText(`by ${author}`);
+    return `${icon} [${number}] ${truncatedMsg} ${authorText}`;
+  });
+}).catch((e) => { throw new Error(e); });
 
 const logBuild = async (repo, buildNo) => {
   // if we have a previously fetched build that's fresh enough, use that
   // gives impression of being more live
   const fetchDelta = lastBuild && new Date().getTime() - lastBuild.fetchedAt;
-  if (lastBuild && fetchDelta < BASE_CONFIG.POLL_DELAY_MS) {
+  if (lastBuild && fetchDelta < CONFIG.POLL_DELAY_MS) {
     const { procs } = lastBuild;
     procs.forEach((proc) => parseProc(proc));
     return;
@@ -108,9 +105,7 @@ const logBuild = async (repo, buildNo) => {
   // if time outside query time or on first fetch
   await getBuild(repo, buildNo).then(
     (res) => {
-      const {
-        status, number, message, author, procs,
-      } = res.data;
+      const { status, number, message, author, procs } = res.data;
 
       // print header if first build fetch
       if (!lastBuild) {
@@ -119,15 +114,14 @@ const logBuild = async (repo, buildNo) => {
         console.log(`${getIcon(status)} [${status}] ${buildHeader}`);
       }
 
+      // we usually only use one "proc" but in the case there are multiple...
       procs.forEach((proc) => parseProc(proc));
 
       // exit if we're no longer running
       if (status !== 'running') process.exit(0);
-
       // if first fetch, set to repeat every second
       if (!lastBuild) setInterval(() => logBuild(repo, buildNo), 1000);
-
-      // set last build and it's queryTime
+      // set last build and the time it was queried
       lastBuild = res.data;
       lastBuild.fetchedAt = new Date().getTime();
     },
@@ -170,9 +164,7 @@ const promptForRepo = (org) => {
 
 async function run() {
   await setup();
-  const {
-    org, repo, buildNo, dev,
-  } = parseArgs(); // args are pre-validated
+  const { org, repo, buildNo, dev } = parseArgs(); // args are pre-validated
 
   // turn on dev mode
   if (dev) require('./test/mock').mockEndpoints(); // eslint-disable-line global-require

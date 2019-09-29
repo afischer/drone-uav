@@ -12,14 +12,10 @@ const skipIcon = `${COLOR_GRAY}⊝${COLOR_WHITE}`;
 const failIcon = `${COLOR_RED}⊗${COLOR_WHITE}`;
 // ⊝⊚⦾⦿🞅○
 
-exports.PEND = pendIcon;
-exports.SKIP = skipIcon;
-exports.WORK = workIcon;
-exports.PASS = passIcon;
-exports.FAIL = failIcon;
+exports.DEFAULT_POLL_DELAY = 4000;
+
 
 exports.grayText = (text) => `${COLOR_GRAY}${text}${COLOR_RESET}`;
-
 
 exports.getIcon = (state) => {
   switch (state) {

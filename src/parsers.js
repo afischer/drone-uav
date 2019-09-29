@@ -28,7 +28,7 @@ exports.parseProc = (proc) => {
     } = task;
 
     let runtime;
-    // if process ended
+    // if process ended - no build end is provided if still running
     if (buildEnd) {
       runtime = formatSeconds(buildEnd - buildStart);
     } else if (state === 'skipped' || state === 'pending') {

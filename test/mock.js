@@ -10,8 +10,6 @@ function getMock(mockName) {
   return fs.readFileSync(path.join(__dirname, `./fixtures/${mockName}.json`), 'utf8');
 }
 
-let liveBuild; // used for mocking the running build
-
 function getLiveBuild() {
   const build = getMock('build-running');
   // eventually change this to have it progress
