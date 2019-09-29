@@ -1,4 +1,3 @@
-const readline = require('readline');
 const process = require('process');
 const { getIcon } = require('./constants');
 

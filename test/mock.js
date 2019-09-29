@@ -7,15 +7,15 @@ const MockAdapter = require('axios-mock-adapter');
 const mock = new MockAdapter(axios);
 
 function getMock(mockName) {
-  return fs.readFileSync(path.join(__dirname, `./fixtures/${mockName}.json`), 'utf8')
+  return fs.readFileSync(path.join(__dirname, `./fixtures/${mockName}.json`), 'utf8');
 }
 
 let liveBuild; // used for mocking the running build
 
 function getLiveBuild() {
-    const build = getMock('build-running')
-    // eventually change this to have it progress
-    return build;
+  const build = getMock('build-running');
+  // eventually change this to have it progress
+  return build;
 }
 
 exports.mockEndpoints = () => {
@@ -26,4 +26,4 @@ exports.mockEndpoints = () => {
   mock.onGet(/\/repos\/.*\/.*\/builds\/70065/).reply(200, getLiveBuild());
 
   // mock.onGet(/\/repos\/.*\/.*\/builds\/[0-9]+/).reply(200, getMock('build'));
-}
+};
