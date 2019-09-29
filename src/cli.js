@@ -17,7 +17,7 @@ const parseArgs = () => {
 
   cli
     .version('0.0.1')
-    .arguments('[org[/repo]] [build #]')
+    .arguments('[org[/repo]] [build number]')
     .option('-d, --dev', 'developer mode - use mocked data')
     .action((orgRepo, buildNo) => {
       if (!orgRepo) return;
