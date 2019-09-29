@@ -22,6 +22,4 @@ exports.mockEndpoints = () => {
 
   mock.onGet(/\/repos\/.*\/.*\/builds\/70064/).reply(200, getMock('build'));
   mock.onGet(/\/repos\/.*\/.*\/builds\/70065/).reply(200, getLiveBuild());
-
-  // mock.onGet(/\/repos\/.*\/.*\/builds\/[0-9]+/).reply(200, getMock('build'));
 };

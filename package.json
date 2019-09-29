@@ -1,6 +1,6 @@
 {
   "name": "drone-uav",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A quick and dirty CLI tool to view drone build statuses",
   "main": "index.js",
   "bin": {

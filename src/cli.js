@@ -1,4 +1,5 @@
 const cli = require('commander');
+const { version } = require('../package.json');
 
 /**
  * parses the passed CLI options
@@ -16,7 +17,7 @@ const parseArgs = () => {
   let error;
 
   cli
-    .version('0.0.1')
+    .version(version)
     .arguments('[org[/repo]] [build number]')
     .option('-d, --dev', 'developer mode - use mocked data')
     .action((orgRepo, buildNo) => {

@@ -1,6 +1,6 @@
 # Drone UAV
 
-A CLI for viewing drone builds.
+A CLI for viewing drone build status.
 
 ### Usage
 ```bash
@@ -30,3 +30,12 @@ $ uav acmeCorp/website 70065
 
 Currently not published on npm! Clone, `cd` into the repo, and run `npm link`.
 Requires node >= 10.
+
+A `~/.drone_uav.json` file will be created on first run. You can edit this file if your drone
+information changes, or if you would like to change the API poll frequency.
+
+
+### Todo
+- [ ] handle non-200 results
+- [ ] clean up async code
+- [ ] use streaming json for repos request? It's pretty big.

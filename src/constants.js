@@ -14,7 +14,6 @@ const failIcon = `${COLOR_RED}⊗${COLOR_WHITE}`;
 
 exports.DEFAULT_POLL_DELAY = 4000;
 
-
 exports.grayText = (text) => `${COLOR_GRAY}${text}${COLOR_RESET}`;
 
 exports.getIcon = (state) => {
